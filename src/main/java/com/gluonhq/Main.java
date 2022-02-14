@@ -14,6 +14,7 @@ public class Main extends Application {
     public void start(Stage stage) {
 
         RichTextArea editor = new RichTextArea();
+        editor.setText("Simple text text text");
 
         BorderPane root = new BorderPane(editor);
 

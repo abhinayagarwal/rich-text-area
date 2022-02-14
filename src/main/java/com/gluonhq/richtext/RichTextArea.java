@@ -65,6 +65,11 @@ public class RichTextArea extends Control {
         codecProperty.set(value);
     }
 
+    private StringProperty text = new SimpleStringProperty();
+    public final String getText() { return text.get(); }
+    public final void setText(String value) { text.set(value); }
+    public final StringProperty textProperty() { return text; }
+
 
     public static interface Codec {
         OutputStream decode(List<Node> nodes);

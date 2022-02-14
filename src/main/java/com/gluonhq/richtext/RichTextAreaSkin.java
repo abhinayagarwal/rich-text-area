@@ -23,6 +23,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 
+import java.text.BreakIterator;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -48,7 +49,7 @@ class RichTextAreaSkin extends SkinBase<RichTextArea> {
 
     private final RichTextAreaViewModel viewModel =
         new RichTextAreaViewModel(
-            new PieceTable("Simple text text text"),
+            new PieceTable(getSkinnable().getText()),
             this::getNextRowPosition // TODO need to find a better way to find next row caret position
         );
 
@@ -156,6 +157,7 @@ class RichTextAreaSkin extends SkinBase<RichTextArea> {
         Objects.requireNonNull(decoration);
         Text text = new Text(Objects.requireNonNull(content));
         text.setFill(decoration.getForeground());
+        text.setSelectionFill(decoration.getBackground());
 
         // Cashing fonts, assuming their reuse, especially for default one
         int hash = Objects.hash(
@@ -223,10 +225,18 @@ class RichTextAreaSkin extends SkinBase<RichTextArea> {
     private void mousePressedListener(MouseEvent e) {
         HitInfo hitInfo = textFlow.hitTest(new Point2D(e.getX(), e.getY()));
         if (hitInfo.getInsertionIndex() >= 0) {
-            viewModel.setCaretPosition(hitInfo.getInsertionIndex());
-            dragStart = viewModel.getCaretPosition();
+            if (e.getClickCount() == 2) {
+                int insertionIndex = hitInfo.getInsertionIndex();
+                BreakIterator wordInstance = BreakIterator.getWordInstance();
+                wordInstance.setText(getSkinnable().getText());
+
+            } else {
+                viewModel.setCaretPosition(hitInfo.getInsertionIndex());
+                dragStart = viewModel.getCaretPosition();
+                viewModel.clearSelection();
+            }
         }
-        viewModel.clearSelection();
+
         getSkinnable().requestFocus();
         e.consume();
     }
