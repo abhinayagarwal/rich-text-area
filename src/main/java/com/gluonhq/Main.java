@@ -1,14 +1,18 @@
 package com.gluonhq;
 
 import com.gluonhq.richtext.RichTextArea;
+import com.gluonhq.richtext.model.TextDecoration;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -23,10 +27,15 @@ public class Main extends Application {
            textLengthLabel.setText( "Text length: " + nv)
         );
 
+        Button bold = new Button("B");
+        bold.setOnAction(e -> editor.decorate(TextDecoration.builder().fontWeight(FontWeight.BOLD).build()));
+        Button italic = new Button("I");
+        italic.setOnAction(e -> editor.decorate(TextDecoration.builder().fontPosture(FontPosture.ITALIC).build()));
+
         CheckBox editableProp = new CheckBox("Editable");
         editableProp.selectedProperty().bindBidirectional(editor.editableProperty());
-        HBox toolbar = new HBox(editableProp);
-        toolbar.setStyle("-fx-padding: 10");
+        ToolBar toolbar = new ToolBar(editableProp, bold, italic);
+        // toolbar.setStyle("-fx-padding: 10");
 
         HBox statusBar = new HBox(10);
         statusBar.setAlignment(Pos.CENTER_RIGHT);

@@ -68,7 +68,6 @@ public class RichTextAreaViewModel {
     }
 
 
-
     // selectionProperty
     private final ObjectProperty<Selection> selectionProperty = new SimpleObjectProperty<>(this, "selection", Selection.UNDEFINED) {
         @Override
@@ -156,7 +155,7 @@ public class RichTextAreaViewModel {
         }
     }
 
-    void decorate(TextDecoration decoration) {
+    public void decorate(TextDecoration decoration) {
         if (getSelection().isDefined()) {
             Selection selection = getSelection();
             textBuffer.decorate(selection.getStart(), selection.getEnd(), decoration);

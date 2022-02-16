@@ -1,6 +1,6 @@
 package com.gluonhq.richtext;
 
-
+import com.gluonhq.richtext.model.TextDecoration;
 import javafx.beans.property.*;
 import javafx.scene.Node;
 import javafx.scene.control.Control;
@@ -74,6 +74,14 @@ public class RichTextArea extends Control {
         codecProperty.set(value);
     }
 
+    /**
+     * Applies the provided decoration on the currently selected text.
+     * In case there is no selected text, this method is a no-op.
+     * @param decoration {@link TextDecoration} to be applied.
+     */
+    public void decorate(TextDecoration decoration) {
+        ((RichTextAreaSkin) getSkin()).decorate(decoration);
+    }
 
     public interface Codec {
         OutputStream decode(List<Node> nodes);

@@ -290,4 +290,7 @@ class RichTextAreaSkin extends SkinBase<RichTextArea> {
         }
     }
 
+    public void decorate(TextDecoration decoration) {
+        viewModel.decorate(decoration);
+    }
 }
