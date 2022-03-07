@@ -217,6 +217,22 @@ public final class PieceTable extends AbstractTextBuffer {
     TextDecoration previousPieceDecoration(int index) {
         return pieces.isEmpty() ? TextDecoration.builder().presets().build() : pieces.get(index > 0 ? index - 1 : 0).getDecoration();
     }
+    
+    public TextDecoration getDecoration(int charIndex) {
+        int textPosition = 0;
+        int index = 0;
+        for (;index < pieces.size(); index++) {
+            Piece piece = pieces.get(index);
+            textPosition += piece.length;
+            if (charIndex < textPosition) {
+                if (charAt(charIndex) == ' ') {
+                    return previousPieceDecoration(index);
+                }
+                return piece.getDecoration();
+            }
+        }
+        return previousPieceDecoration(index);
+    }
 
     @Override
     public String toString() {

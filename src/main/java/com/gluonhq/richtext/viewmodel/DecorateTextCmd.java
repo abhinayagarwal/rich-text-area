@@ -1,20 +1,23 @@
 package com.gluonhq.richtext.viewmodel;
 
 import com.gluonhq.richtext.model.TextDecoration;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 
 import java.util.Objects;
 
-class DecorateTextCmd extends AbstractEditCmd {
+public abstract class DecorateTextCmd extends AbstractEditCmd {
 
-    private final TextDecoration decoration;
+    BooleanProperty state = new SimpleBooleanProperty();
 
-    public DecorateTextCmd(TextDecoration decoration) {
-        this.decoration = decoration;
+    TextDecoration getDecoration() {
+        return Decoration.getInstance().toTextDecoration();
     }
 
     @Override
     public void doRedo(RichTextAreaViewModel viewModel) {
-        Objects.requireNonNull(viewModel).decorate(decoration);
+        state.set(!state.get());
+        Objects.requireNonNull(viewModel).decorate(getDecoration());
     }
 
     @Override

@@ -1,9 +1,11 @@
 package com.gluonhq;
 
-import com.gluonhq.richtext.action.Action;
-import com.gluonhq.richtext.RichTextArea;
 import com.gluonhq.richtext.FaceModel;
+import com.gluonhq.richtext.RichTextArea;
+import com.gluonhq.richtext.action.Action;
 import com.gluonhq.richtext.model.TextDecoration;
+import com.gluonhq.richtext.viewmodel.DecorateTextBold;
+import com.gluonhq.richtext.viewmodel.DecorateTextItalic;
 import javafx.application.Application;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -65,8 +67,7 @@ public class Main extends Application {
         ComboBox<String> fontFamilies = new ComboBox<>();
         fontFamilies.getItems().setAll(Font.getFamilies());
         fontFamilies.setValue("Arial");
-        fontFamilies.setOnAction(e -> editor.getActionFactory().decorate(
-                TextDecoration.builder().fontFamily(fontFamilies.getSelectionModel().getSelectedItem()).build()).execute(e));
+        fontFamilies.setOnAction(e -> editor.getActionFactory().decorate(new DecorateTextBold()).execute(e));
 
         final ComboBox<Double> fontSize = new ComboBox<>();
         fontSize.setEditable(true);
@@ -75,8 +76,7 @@ public class Main extends Application {
                 .filter(i -> i % 2 == 0 || i < 10)
                 .asDoubleStream().boxed().collect(Collectors.toList()));
         fontSize.setValue(17.0);
-        fontSize.setOnAction(e -> editor.getActionFactory().decorate(
-                TextDecoration.builder().fontSize(fontSize.getValue()).build()).execute(e));
+        fontSize.setOnAction(e -> editor.getActionFactory().decorate(new DecorateTextBold()).execute(e));
         fontSize.setConverter(new StringConverter<>() {
             @Override
             public String toString(Double aDouble) {
@@ -91,13 +91,11 @@ public class Main extends Application {
 
         final ColorPicker textForeground = new ColorPicker();
         textForeground.getStyleClass().add("foreground");
-        textForeground.setOnAction(e -> editor.getActionFactory().decorate(
-                TextDecoration.builder().foreground(textForeground.getValue()).build()).execute(e));
+        textForeground.setOnAction(e -> editor.getActionFactory().decorate(new DecorateTextItalic()).execute(e));
 
         final ColorPicker textBackground = new ColorPicker();
         textBackground.getStyleClass().add("background");
-        textBackground.setOnAction(e -> editor.getActionFactory().decorate(
-                TextDecoration.builder().background(textBackground.getValue()).build()).execute(e));
+        textBackground.setOnAction(e -> editor.getActionFactory().decorate(new DecorateTextItalic()).execute(e));
 
         CheckBox editableProp = new CheckBox("Editable");
         editableProp.selectedProperty().bindBidirectional(editor.editableProperty());
@@ -113,8 +111,8 @@ public class Main extends Application {
                 new Separator(Orientation.VERTICAL),
                 fontFamilies,
                 fontSize,
-                actionButton(LineAwesomeSolid.BOLD, editor.getActionFactory().decorate(TextDecoration.builder().fontWeight(FontWeight.BOLD).build())),
-                actionButton(LineAwesomeSolid.ITALIC, editor.getActionFactory().decorate(TextDecoration.builder().fontPosture(FontPosture.ITALIC).build())),
+                actionToggleButton(LineAwesomeSolid.BOLD, editor.getActionFactory().decorate(new DecorateTextBold())),
+                actionButton(LineAwesomeSolid.ITALIC, editor.getActionFactory().decorate(new DecorateTextItalic())),
                 textForeground,
                 textBackground,
                 new Separator(Orientation.VERTICAL),
@@ -164,6 +162,16 @@ public class Main extends Application {
         button.setGraphic(icon);
         button.disableProperty().bind(action.disabledProperty());
         button.setOnAction(action::execute);
+        return button;
+    }
+
+    private ToggleButton actionToggleButton(Ikon ikon, Action action) {
+        ToggleButton button = new ToggleButton();
+        FontIcon icon = new FontIcon(ikon);
+        icon.setIconSize(20);
+        button.setGraphic(icon);
+        button.selectedProperty().addListener((o, ov, nv) -> System.out.println("Main: " + nv));
+        action.stateProperty().bind(button.selectedProperty());
         return button;
     }
 

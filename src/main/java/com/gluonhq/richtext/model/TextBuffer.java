@@ -1,6 +1,5 @@
 package com.gluonhq.richtext.model;
 
-import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.ReadOnlyIntegerProperty;
 
 import java.text.CharacterIterator;
@@ -29,6 +28,13 @@ public interface TextBuffer {
      * @param textDecoration decoration to apply.
      */
     void decorate(int start, int end, TextDecoration textDecoration);
+
+    /**
+     * Returns the text decoration applied of the piece at the current index
+     * @param charIndex character index in the text buffer
+     * @return TextDecoration
+     */
+    TextDecoration getDecoration(int charIndex);
 
     void undo();
     void redo();

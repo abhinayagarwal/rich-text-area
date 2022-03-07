@@ -22,6 +22,7 @@ class BasicAction implements Action {
     private final Function<Action, ActionCmd> actionCmdFunction;
 
     private final BooleanProperty disabledImplProperty = new SimpleBooleanProperty(this, "disabledImpl", false);
+    private final BooleanProperty stateImplProperty = new SimpleBooleanProperty(this, "stateImpl", false);
 
     public BasicAction(RichTextArea control, Function<Action, ActionCmd> actionCmdFunction) {
         this.actionCmdFunction = Objects.requireNonNull(actionCmdFunction);
@@ -45,9 +46,13 @@ class BasicAction implements Action {
             return;
         }
         viewModel = ((RichTextAreaSkin) skin).getViewModel();
-        BooleanBinding binding = getActionCmd().getDisabledBinding(viewModel);
-        if (binding != null) {
-            disabledImplProperty.bind(binding);
+        BooleanBinding disabledBinding = getActionCmd().getDisabledBinding(viewModel);
+        BooleanProperty state = getActionCmd().getState(viewModel);
+        if (disabledBinding != null) {
+            disabledImplProperty.bind(disabledBinding);
+        }
+        if (state != null) {
+            state.bind(stateImplProperty);
         }
     }
 
@@ -63,6 +68,11 @@ class BasicAction implements Action {
     @Override
     public ReadOnlyBooleanProperty disabledProperty() {
         return disabledImplProperty;
+    }
+
+    @Override
+    public BooleanProperty stateProperty() {
+        return stateImplProperty;
     }
 }
 

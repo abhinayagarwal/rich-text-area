@@ -293,6 +293,10 @@ public class RichTextAreaViewModel {
         LOGGER.log(Level.FINE, getTextBuffer().toString());
     }
 
+    public TextDecoration getDecoration(int caretPosition) {
+        return getTextBuffer().getDecoration(caretPosition);
+    }
+
     void undo() {
         this.getTextBuffer().undo();
     }

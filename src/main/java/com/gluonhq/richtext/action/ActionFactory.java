@@ -1,8 +1,8 @@
 package com.gluonhq.richtext.action;
 
 import com.gluonhq.richtext.RichTextArea;
-import com.gluonhq.richtext.model.TextDecoration;
 import com.gluonhq.richtext.viewmodel.ActionCmdFactory;
+import com.gluonhq.richtext.viewmodel.DecorateTextCmd;
 
 public class ActionFactory {
 
@@ -53,7 +53,7 @@ public class ActionFactory {
         return paste;
     }
 
-    public Action decorate(TextDecoration decoration) {
+    public Action decorate(DecorateTextCmd decoration) {
         return new BasicAction(control, action -> ACTION_CMD_FACTORY.decorateText(decoration));
     }
 }

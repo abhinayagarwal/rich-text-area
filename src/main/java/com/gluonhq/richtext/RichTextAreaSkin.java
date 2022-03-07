@@ -5,6 +5,9 @@ import com.gluonhq.richtext.model.TextBuffer;
 import com.gluonhq.richtext.model.TextDecoration;
 import com.gluonhq.richtext.viewmodel.ActionCmd;
 import com.gluonhq.richtext.viewmodel.ActionCmdFactory;
+import com.gluonhq.richtext.viewmodel.DecorateTextBold;
+import com.gluonhq.richtext.viewmodel.DecorateTextItalic;
+import com.gluonhq.richtext.viewmodel.Decoration;
 import com.gluonhq.richtext.viewmodel.RichTextAreaViewModel;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -24,17 +27,8 @@ import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.SkinBase;
-import javafx.scene.input.ContextMenuEvent;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.control.*;
+import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Path;
@@ -45,11 +39,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
@@ -60,10 +50,10 @@ import static com.gluonhq.richtext.viewmodel.RichTextAreaViewModel.Direction;
 import static java.util.Map.entry;
 import static javafx.scene.input.KeyCode.*;
 import static javafx.scene.input.KeyCombination.*;
-import static javafx.scene.text.FontPosture.ITALIC;
-import static javafx.scene.text.FontWeight.BOLD;
 
 public class RichTextAreaSkin extends SkinBase<RichTextArea> {
+
+    private PieceTable pieceTable;
 
     interface ActionBuilder extends Function<KeyEvent, ActionCmd>{}
 
@@ -84,8 +74,8 @@ public class RichTextAreaSkin extends SkinBase<RichTextArea> {
         entry( new KeyCodeCombination(ENTER, SHIFT_ANY),                                     e -> ACTION_CMD_FACTORY.insertText("\n")),
         entry( new KeyCodeCombination(BACK_SPACE, SHIFT_ANY),                                e -> ACTION_CMD_FACTORY.removeText(-1)),
         entry( new KeyCodeCombination(DELETE),                                               e -> ACTION_CMD_FACTORY.removeText(0)),
-        entry( new KeyCodeCombination(B, SHORTCUT_DOWN),                                     e -> ACTION_CMD_FACTORY.decorateText(TextDecoration.builder().fontWeight(BOLD).build())),
-        entry( new KeyCodeCombination(I, SHORTCUT_DOWN),                                     e -> ACTION_CMD_FACTORY.decorateText(TextDecoration.builder().fontPosture(ITALIC).build()))
+        entry( new KeyCodeCombination(B, SHORTCUT_DOWN),                                     e -> ACTION_CMD_FACTORY.decorateText(new DecorateTextBold())),
+        entry( new KeyCodeCombination(I, SHORTCUT_DOWN),                                     e -> ACTION_CMD_FACTORY.decorateText(new DecorateTextItalic()))
     );
 
     // TODO need to find a better way to find next row caret position
@@ -229,7 +219,8 @@ public class RichTextAreaSkin extends SkinBase<RichTextArea> {
         if (faceModel == null) {
             return;
         }
-        viewModel.setTextBuffer(new PieceTable(faceModel));
+        pieceTable = new PieceTable(faceModel);
+        viewModel.setTextBuffer(pieceTable);
         viewModel.caretPositionProperty().addListener(caretPositionListener);
         viewModel.selectionProperty().addListener(selectionListener);
         viewModel.addChangeListener(textChangeListener);
@@ -378,6 +369,13 @@ public class RichTextAreaSkin extends SkinBase<RichTextArea> {
         }
         caretShape.setLayoutX(textFlowLayoutX);
         caretShape.setLayoutY(textFlowLayoutY);
+        updateDecoration(caretPosition);
+    }
+
+    private void updateDecoration(int caretPosition) {
+        if (caretPosition >= 0) {
+            Decoration.getInstance().update(viewModel.getDecoration(caretPosition));
+        }
     }
 
     private void setCaretVisibility(boolean on) {

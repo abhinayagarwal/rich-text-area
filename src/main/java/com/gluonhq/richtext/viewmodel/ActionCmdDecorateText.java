@@ -1,28 +1,27 @@
 package com.gluonhq.richtext.viewmodel;
 
-import com.gluonhq.richtext.Selection;
-import com.gluonhq.richtext.model.TextDecoration;
-import javafx.beans.binding.BooleanBinding;
-
-import java.util.Objects;
+import javafx.beans.property.BooleanProperty;
 
 class ActionCmdDecorateText implements ActionCmd {
 
-    private final TextDecoration decoration;
+    private final DecorateTextCmd decorationCmd;
 
-    public ActionCmdDecorateText(TextDecoration decoration) {
-        this.decoration = decoration;
+    public ActionCmdDecorateText(DecorateTextCmd decorationCmd) {
+        this.decorationCmd = decorationCmd;
+        decorationCmd.state.addListener((o, ov, nv) -> {
+            System.out.println("ActionCmdDecorateText: " + nv);
+        });
     }
 
     @Override
     public void apply(RichTextAreaViewModel viewModel) {
         if (viewModel.isEditable()) {
-            viewModel.getCommandManager().execute(new DecorateTextCmd(Objects.requireNonNull(decoration)));
+            viewModel.getCommandManager().execute(decorationCmd);
         }
     }
 
     @Override
-    public BooleanBinding getDisabledBinding(RichTextAreaViewModel viewModel) {
-        return viewModel.selectionProperty().isEqualTo(Selection.UNDEFINED).or(viewModel.editableProperty().not());
+    public BooleanProperty getState(RichTextAreaViewModel viewModel) {
+        return decorationCmd.state;
     }
 }
