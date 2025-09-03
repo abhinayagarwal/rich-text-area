@@ -39,7 +39,7 @@ This document provides an overview of the architecture of the **RichTextArea** c
 ### Component Architecture
 ```mermaid
 flowchart TD
-    UI[RichTextArea (Control)] --> Skin[RichTextAreaSkin]
+    UI[RichTextArea Control] --> Skin[RichTextAreaSkin]
     Skin --> Paragraphs[ParagraphTile / RichListCell]
     UI --> Selection
     Skin --> ViewModel
