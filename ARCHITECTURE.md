@@ -13,7 +13,7 @@ This document provides an overview of the architecture of the **RichTextArea** c
 - **CSS + Properties**: Styling and configuration
 
 ### 2. ViewModel Layer
-- ** **: Manages caret position and selection ranges
+- **Selection**: Manages caret position and selection ranges
 - **Paragraph management**: Coordinates how text blocks are represented
 - **Factories**  
   - `DefaultLinkCallbackFactory`: Handles hyperlink callbacks  
